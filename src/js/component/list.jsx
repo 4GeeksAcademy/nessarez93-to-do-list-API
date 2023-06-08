@@ -1,10 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const ToDoList = () => {
 
-//Esta función agrega el valor nuevo
-        const [toDo,setToDo] = useState('¿Qué falta hacer?')
+    const [toDo,setToDo] = useState('¿Qué falta hacer?')
         const [toDoArray,setToDoArray] = useState([])
+        const [lista, setLista] = useState([])
+
+    const crearUsuario = async() => {
+        const response = await fetch('https://assets.breatheco.de/apis/fake/todos/user/nessarz', {
+            method: "POST",
+            body: JSON.stringify([]),
+            headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const data = await response.json()
+    console.log(data)
+    }
+
+    useEffect(()=> {
+        /*crearUsuario()*/
+        obtenerLista()
+    })
+
+    const obtenerLista = async() => {
+        try {
+            const response = await fetch('https://assets.breatheco.de/apis/fake/todos/user/nessarz')
+            const data = await response.json()
+            /*console.log(data)*/
+            setLista(data)
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+//Esta función agrega el valor nuevo
+        
         function addDuty(e) {
             setToDo (e.target.value)
         }
