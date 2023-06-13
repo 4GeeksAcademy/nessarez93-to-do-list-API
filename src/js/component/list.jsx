@@ -21,15 +21,34 @@ const ToDoList = () => {
     useEffect(()=> {
         /*crearUsuario()*/
         obtenerLista()
-    })
+    },[])
+
+    useEffect(()=> {
+        actualizarLista()
+    },[lista])
 
     const obtenerLista = async() => {
         try {
             const response = await fetch('https://assets.breatheco.de/apis/fake/todos/user/nessarz')
             const data = await response.json()
-            /*console.log(data)*/
+            // console.log(data)
             setLista(data)
         } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const actualizarLista = async() => {
+        try {
+            const response = await fetch('https://assets.breatheco.de/apis/fake/todos/user/nessarz', {
+                method: "PUT",
+                body: JSON.stringify(lista),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            const data = await response.json()
+        } catch (error) {
             console.log(error)
         }
     }
@@ -41,19 +60,20 @@ const ToDoList = () => {
         }
 //Esta función activa el enter
         function submit(e) {
-            console.log('submit')
-            setToDoArray ([...toDoArray,toDo])
             e.preventDefault();
+            // console.log('submit')
+            setLista ([...lista,{"label": toDo, "done": false}])
+            // setToDoArray ([...toDoArray,toDo])
         }
 //Esta función borra los elementos
         function borrar (id) {
             let duties = []
-            duties = toDoArray.filter((item,index) => {
+            duties = lista.filter((item,index) => {
                 if (index !== id) {
                     return item
                 }
             })
-            setToDoArray(duties)
+            setLista(duties)
         }
 
 
@@ -64,10 +84,10 @@ const ToDoList = () => {
                 <form onSubmit={submit} className="w-50 m-auto">
                         <input type="text" onChange={addDuty} value={toDo} aria-label=".form-control-lg example"/>
                         <ul className="list-group list-group-flush" >
-                            {toDoArray.map((item, id) => 
-                            <li key={id} >{item}<button className="btn" onClick={() => borrar(id)} type= "button" >✕</button></li>
+                            {lista.map((item, id) => 
+                            <li key={id} >{item.label}<button className="btn" onClick={() => borrar(id)} type= "button" >✕</button></li>
                             )}
-                            <li><h6>{toDoArray.length} items left</h6></li>
+                            <li><h6>{lista.length} items left</h6></li>
                         </ul>
                 </form>
             </div>
